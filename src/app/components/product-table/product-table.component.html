@@ -1,0 +1,49 @@
+ <div style="display: flex;justify-content: end;">
+<button pButton label="Add Product" icon="pi pi-plus" (click)="showAddProductModal()" class="add-product-btn"></button>
+</div>
+<!-- Add/Edit Product Modal -->
+<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="true" [header]="editMode ? 'Edit Product' : 'Add Product'" [responsive]="true" [style]="{width: '400px'}">
+  <form [formGroup]="productForm" class="product-form">
+    <input pInputText formControlName="name" placeholder="Product Name" class="form-control" />
+    <input pInputText formControlName="price" placeholder="Price" type="number" class="form-control" />
+    <p-dropdown
+      class="form-control"
+      formControlName="category"
+      [options]="categoryMaster"
+      optionLabel="name"
+      placeholder="Select category">
+    </p-dropdown>
+    <button pButton type="submit" [label]="editMode ? 'Edit' : 'Add'" class="submit-btn" (click)="displayModal = false; onSubmit(productForm.value)"></button>
+  </form>
+
+</p-dialog>
+
+<!-- Product List Table -->
+<p-table [value]="products" [tableStyle]="{'min-width': '60rem'}" styleClass="p-datatable p-datatable-gridlines styled-table">
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="name">Name<p-sortIcon field="name" /></th>
+      <th pSortableColumn="price">Price<p-sortIcon field="price" /></th>
+      <th pSortableColumn="category">Category<p-sortIcon field="category" /></th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-product>
+    <tr>
+      <td>{{ product.name }}</td>
+      <td>{{ product.price | currency:'INR':'symbol' }}</td>
+      <td>{{ product.category.name }}</td>
+      <td class="actions">
+        <button pButton icon="pi pi-pencil" style="margin-right: 5px;" class="edit-btn" (click)="editProduct(product)"></button>
+        <button pButton icon="pi pi-trash" class="delete-btn" (click)="deleteProduct(product.id)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    <div class="summary">
+      <b>Total Products:</b> {{ products ? products.length : 0 }}
+    </div>
+  </ng-template>
+</p-table>
+
+<app-product-chart *ngIf="show" [products]="chartData"></app-product-chart>
